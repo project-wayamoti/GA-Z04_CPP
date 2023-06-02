@@ -1,172 +1,117 @@
 #include "DxLib.h"
+#include <math.h>
+#include <cmath>
+#define WIDTH 1280
+#define HEIGHT 720
 
-// ƒvƒƒOƒ‰ƒ€‚ÌÅ‰‚ÍWinMain‚Ån‚ß‚é
+// ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã®æœ€åˆã¯WinMainã§å§‹ã‚ã‚‹
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    //##### ‰Šúİ’è #####//
-    // ƒEƒBƒ“ƒhƒEƒ‚[ƒhİ’è
+    //##### åˆæœŸè¨­å®š #####//
+    // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰è¨­å®š
     ChangeWindowMode(TRUE);
 
-    // ‰æ–ÊƒTƒCƒYİ’è
-    int width = 1920;
-    int height = 1080;
-    SetGraphMode(width, height, 32);
+    // ç”»é¢ã‚µã‚¤ã‚ºè¨­å®š
+    SetGraphMode(WIDTH, HEIGHT, 32);
 
-    // DXƒ‰ƒCƒuƒ‰ƒŠ‰Šú‰»ˆ—
+    // DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªåˆæœŸåŒ–å‡¦ç†
     if (DxLib_Init() == -1) {
-        return -1; // ƒGƒ‰[‚ª‹N‚«‚½‚ç’¼‚¿‚ÉI—¹
+        return -1; // ã‚¨ãƒ©ãƒ¼ãŒèµ·ããŸã‚‰ç›´ã¡ã«çµ‚äº†
     }
 
 
 
-    //## ŠÂ‹«‚É‰‚¶‚Äİ’è
-    // ˆÚ“®•¨‘Ì‚Ì” ƒTƒCƒY
-    int size = 60;
+    //## ç’°å¢ƒã«å¿œã˜ã¦è¨­å®š
 
-    // Œ¸Š’l
-    // ¦‰t»‚ÌƒtƒŒ[ƒ€ƒŒ[ƒg‚É‚æ‚Á‚Ä•Ï‰»‚·‚é‚±‚Æ‚ª‚í‚©‚Á‚Ä‚¢‚é‚½‚ß
-    // “®‚«‚ª‘‚·‚¬‚éê‡‚â‚¨‚»‚·‚¬‚éê‡‚Í‚±‚Ì”’l‚ğ’²®‚·‚é‚±‚ÆB
+    // æ¸›è¡°å€¤
+    // â€»æ¶²æ™¶ã®ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¬ãƒ¼ãƒˆã«ã‚ˆã£ã¦å¤‰åŒ–ã™ã‚‹ã“ã¨ãŒã‚ã‹ã£ã¦ã„ã‚‹ãŸã‚
+    // å‹•ããŒæ—©ã™ãã‚‹å ´åˆã‚„ãŠãã™ãã‚‹å ´åˆã¯ã“ã®æ•°å€¤ã‚’èª¿æ•´ã™ã‚‹ã“ã¨ã€‚
     float decay = 0.97; // 60=0.97 300=0.9925 or 0.99
 
-    // ƒL[“ü—Í‚ÌˆÚ“®‘¬“x
+    // ã‚­ãƒ¼å…¥åŠ›æ™‚ã®ç§»å‹•é€Ÿåº¦
     int moveSpeed = 15;
 
-    // œ–@”’l
-    // ¦‰t»‚ÌƒtƒŒ[ƒ€ƒŒ[ƒg‚É‚æ‚Á‚Ä•Ï‰»‚·‚é‚±‚Æ‚ª‚í‚©‚Á‚Ä‚¢‚é‚½‚ß
-    // “®‚«‚ª‘‚·‚¬‚éê‡‚â‚¨‚»‚·‚¬‚éê‡‚Í‚±‚Ì”’l‚ğ’²®‚·‚é‚±‚ÆB
+    // é™¤æ³•æ•°å€¤
+    // â€»æ¶²æ™¶ã®ãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¬ãƒ¼ãƒˆã«ã‚ˆã£ã¦å¤‰åŒ–ã™ã‚‹ã“ã¨ãŒã‚ã‹ã£ã¦ã„ã‚‹ãŸã‚
+    // å‹•ããŒæ—©ã™ãã‚‹å ´åˆã‚„ãŠãã™ãã‚‹å ´åˆã¯ã“ã®æ•°å€¤ã‚’èª¿æ•´ã™ã‚‹ã“ã¨ã€‚
     float divisor = 0.25; // 60=0.25 300=0.01
 
 
 
-    //## ŒÅ—L‚Ìİ’è
-    // ” ‚ÌƒTƒCƒY‚Ì”¼•ª‚ğŒvZ
-    int sizeCenter = size / 2;
+    //## å›ºæœ‰ã®è¨­å®š
 
-    // F‚Ìİ’è
+    // è‰²ã®è¨­å®š
     unsigned int mainColor = GetColor(0, 0, 255);
     unsigned int subColor = GetColor(255, 0, 0);
 
-    // ˆÚ“®•¨‘Ì‰ŠúÀ•Wİ’è
-    int x = width / 2;
-    int y = height / 2;
+    // ç§»å‹•ç‰©ä½“åˆæœŸåº§æ¨™è¨­å®š
+    float x = WIDTH / 2;
+    float y = HEIGHT / 2;
+    float x_ = 1;
+    float y_ = 1;
 
-    // ’†‰›•¨‘Ì‰ŠúÀ•Wİ’è
-    int centerX = width / 2;
-    int centerY = height / 2;
+    // å›ºå®š
+    float x1 = 500;
+    float y1 = 370;
 
-    // ƒ}ƒEƒXÀ•Wæ“¾
-    int mouseX = 0;
-    int mouseY = 0;
+    // ç§»å‹•ç‰©ä½“ã®ç®±ã‚µã‚¤ã‚º
+    int size = 32;
 
-    // ‰^“®ƒxƒNƒ^Œn“Ši”[
-    int RelativeX = 0;
-    int RelativeY = 0;
-    float MotionX = 0;
-    float MotionY = 0;
+    // ç®±ã®ã‚µã‚¤ã‚ºã®åŠåˆ†ã‚’è¨ˆç®—
+    int sc = size / 2;
 
-    // “–‚½‚è”»’è‚ğ‚Â‚¯‚½ƒIƒuƒWƒFƒNƒg‚ÌŠi”[
-    bool obj = false;
-    int objX = 100;
-    int objY = 400;
-
-
-
-    // ƒƒCƒ“ƒ‹[ƒvi•`‰æˆ—j
+    // ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—ï¼ˆæç”»å‡¦ç†ï¼‰
     while (ProcessMessage() == 0) {
-        // ‰æ–Ê‚ÌXV
+        // ç”»é¢ã®æ›´æ–°
         ClearDrawScreen();
 
 
+        //##### ã“ã“ã‹ã‚‰ ä¸­å¤®ç‰©ä½“ã®å‡¦ç†
+        //çƒä½“ç§»å‹•å‡¦ç†
+        DrawCircle(x, y, size, mainColor, TRUE); //TRUE å¡—ã‚Šã¤ã¶ã— / FLASE å¡—ã‚Šã¤ã¶ã•ãªã„
 
-        //##### ‚±‚±‚©‚ç ˆÚ“®•¨‘Ì‚Ìˆ—
-        // ’†S‚Æ‚Ì‘Š‘ÎƒxƒNƒ^[‚Ìæ“¾
-        RelativeX = centerX - x;
-        RelativeY = centerY - y;
+        //ç§»å‹•è¨ˆç®—
+        x += x_;
+        //y += y_;
+        if (x == 0 + size)      x_ = +1;
+        if (x == WIDTH - size)  x_ = -1;
+        //if (y == 0 + size)      y_ = +1;
+        //if (y == HEIGHT - size) y_ = -1;
 
-        // ‰Á‘¬¬•ª‚ğ‰^“®ƒxƒNƒ^‚É—İÏ‰ÁZ
-        MotionX += RelativeX * divisor;
-        MotionY += RelativeY * divisor;
+        /* æ–œã‚ç§»å‹•
+        if (x == 0 + size)      x_ = +1;
+        if (x == WIDTH - size)  x_ = -1;
+        if (y == 0 + size)      y_ = +1;
+        if (y == HEIGHT - size) y_ = -1;
+        */
 
-        // ‰^“®ƒxƒNƒ^‚ğg‚Á‚ÄˆÚ“®
-        x += MotionX;
-        y += MotionY;
+        // 2ã¤ã®å††ã®ä¸­å¿ƒåº§æ¨™ã®å·®åˆ†ã‚’è¨ˆç®—
+        float dx = x1 - x;
+        float dy = y1 - y;
 
-        // ƒ{[ƒ‹‚Ì‰^“®ƒxƒNƒ^‚ğŒ¸Š‚³‚¹‚é
-        MotionX *= decay;
-        MotionY *= decay;
-
-
-
-        //##### ‚±‚±‚©‚ç ’†‰›•¨‘Ì‚Ìˆ—
-        // ƒ}ƒEƒXÀ•W‚Ìæ“¾
-        GetMousePoint(&mouseX, &mouseY);
-
-        // ƒ}ƒEƒXƒNƒŠƒbƒN‚Å’†S•¨‘Ì‚ÌÀ•W‚ÆF‚ğ•ÏX
-        if ((GetMouseInput() & MOUSE_INPUT_LEFT) != 0) {
-            subColor = GetColor(0, 255, 0);
-            centerX = mouseX - sizeCenter; // ƒ}ƒEƒXÀ•W‚Í¶ã‚ªŒ´“_‚È‚Ì‚ÅA’†SÀ•W‚É‡‚í‚¹‚é‚½‚ß‚É}Œ`‚Ì2•ª‚Ì1‚¾‚¯ˆø‚­
-            centerY = mouseY - sizeCenter;
-        }
-        else {
-            subColor = GetColor(255, 0, 0);
-        }
-
-        // ƒL[‚ÅˆÚ“®‚³‚¹‚é
-        int input = GetJoypadInputState(DX_INPUT_KEY_PAD1);
-        if (input & PAD_INPUT_RIGHT) {
-            centerX += moveSpeed;
-        }
-        if (input & PAD_INPUT_LEFT) {
-            centerX -= moveSpeed;
-        }
-        if (input & PAD_INPUT_UP) {
-            centerY -= moveSpeed;
-        }
-        if (input & PAD_INPUT_DOWN) {
-            centerY += moveSpeed;
-        }
-
-        // ’†S•¨‘Ì‚Í‰ğ‘œ“xŠO‚Éo‚³‚È‚¢
-        if (centerX < 0) {
-            centerX = 0;
-        }
-        if (centerX > width - size) {
-            centerX = width - size;
-        }
-        if (centerY < 0) {
-            centerY = 0;
-        }
-        if (centerY > height - size) {
-            centerY = height - size;
-        }
+        // 2ã¤ã®å††ã®ä¸­å¿ƒåº§æ¨™ã®è·é›¢ã‚’è¨ˆç®—
+        float distance = std::sqrt((dx * dx) + (dy * dy));
 
 
 
-        //##### ‚±‚±‚©‚ç •`‰æˆ—
-        // lŠp‚ğ•`‰æ DrawBox(¶ãXÀ•W, ¶ãYÀ•W, ‰E‰ºXÀ•W, ‰E‰ºYÀ•W, F, “h‚è‚Â‚Ô‚µƒtƒ‰ƒO)
+        //å›è»¢å¯èƒ½ç¯„å›²
+        DrawCircle(500, 370, 16, GetColor(255, 255, 255), FALSE); //TRUE å¡—ã‚Šã¤ã¶ã— / FLASE å¡—ã‚Šã¤ã¶ã•ãªã„
+        DrawCircle(500, 370, 64, GetColor(255, 255, 255), FALSE); //TRUE å¡—ã‚Šã¤ã¶ã— / FLASE å¡—ã‚Šã¤ã¶ã•ãªã„
 
-        // ”j‰ó‰Â”\‚ÈƒIƒuƒWƒFƒNƒg‚ğ‚Ü‚¸1‚Â‚¾‚¯—pˆÓB
-        // ˆÚ“®•¨‘Ì‚Æ“Á’è‚ÌˆÊ’u‚Éİ’u‚³‚ê‚½ƒIƒuƒWƒFƒNƒg‚ªG‚ê‚½‚çF‚ğ•Ï‚¦‚é
-        if (x + size > objX && x < objX + (size * 3) && y + size > objY && y < objY + (size * 3)) obj = true;
-        if (!obj) DrawBox(objX, objY, objX + (size * 3), objY + (size * 3), GetColor(255, 255, 255), TRUE);
 
-        // ’†S•¨‘Ì•`‰æ
-        DrawBox(centerX, centerY, centerX + size, centerY + size, subColor, TRUE);
-        // ˆÚ“®•¨‘Ì•`‰æ
-        DrawBox(x, y, x + size, y + size, mainColor, TRUE);
-        // •¨‘Ì‚Ì’†S‚Æ’†S‚ğü‚ÅŒ‹‚Ô
-        DrawLine(x + sizeCenter, y + sizeCenter, centerX + sizeCenter, centerY + sizeCenter, GetColor(255, 255, 255));
 
-        // ƒfƒoƒbƒO—p
-        printfDx("x:%d y:%d\n", x, y);
-        printfDx("centerX:%d centerY:%d\n", centerX, centerY);
-        printfDx("RelativeX:%d RelativeY:%d\n", RelativeX, RelativeY);
-        printfDx("MotionX:%f MotionY:%f\n", MotionX, MotionY);
 
-        // ‰æ–Ê‚ÌXVi•K{j
+        //##### ã“ã“ã‹ã‚‰ æç”»å‡¦ç†
+        printfDx("x:%f y:%f\n", x, y);
+        printfDx("x:%f y:%f\n", x1, y1);
+            printfDx("x:%f y:%f\n", dx, dy);
+        printfDx("%d\n", distance);
+        
+
+        // ç”»é¢ã®æ›´æ–°ï¼ˆå¿…é ˆï¼‰
         ScreenFlip();
-        clsDx(); // ƒfƒoƒbƒOƒƒO‰æ–Ê‚ğƒNƒŠƒA‚·‚éˆ—
+        clsDx(); // ãƒ‡ãƒãƒƒã‚°ãƒ­ã‚°ç”»é¢ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹å‡¦ç†
     }
 
-    DxLib_End(); // DX Library‚Ìg—p‚ğI—¹‚·‚éˆ—
-    return 0;    // ƒ\ƒtƒg‚ğ³íI—¹
+    DxLib_End(); // DX Libraryã®ä½¿ç”¨ã‚’çµ‚äº†ã™ã‚‹å‡¦ç†
+    return 0;    // ã‚½ãƒ•ãƒˆã‚’æ­£å¸¸çµ‚äº†
 }
