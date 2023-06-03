@@ -36,24 +36,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return -1; // エラーが起きたら直ちに終了
     }
 
-
-
     //## 環境に応じて設定
-
     // 移動速度
     int moveSpeed = 4; // 60Hz=8, 300Hz=1
 
-
-
     //## 固有の設定
-
     // 色の設定
     unsigned int mainColor = GetColor(0, 0, 255);
     unsigned int subColor = GetColor(255, 0, 0);
 
     // Vector2構造体の宣言
-    Vector2 pos, move, axis, goal, moveVec; // pos: 現在の座標, move: 移動量, axis: 軸, goal: 目標座標, moveVec: 移動ベクトル
-    //Vector2 axis[3][2]; // 軸の座標 [軸の数][x, y]
+    // pos: 現在の座標, move: 移動量, axis: 軸, goal: 目標座標, moveVec: 移動ベクトル
+    Vector2 pos, move, axis, goal, moveVec;
 
     // 移動物体初期設定
     pos.x = WIDTH / 2;  // 画面の中心に設定
@@ -74,8 +68,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     goal.x = 1000;
     goal.y = 700;
 
-
     // 回転軸複数設定 ランダムな値を設定する
+    // 参考文献 : http://www7b.biglobe.ne.jp/~robe/cpphtml/html01/cpp01062.html
     float axiss[3][2] = {
         {
             getRandom(150, 450), getRandom(150, HEIGHT - 150)
@@ -86,12 +80,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         }
     };
 
-    // メインループ（描画処理）
+    //##### ここまで初期設定 #####//
+
+    //##### メインループ（描画処理） #####//
     while (ProcessMessage() == 0) {
         // 画面の更新
         ClearDrawScreen();
 
-        // 回転可能範囲 (円)
+        //##### 回転可能範囲 (円)
         // 計算式: (軸のサイズ * 10) + (移動物体のサイズ)
         // TRUE 塗りつぶし / FLASE 塗りつぶさない
         if (getDistance(pos.x, pos.y, axis.x, axis.y) < axis.size * safeArea + pos.size) {
@@ -109,7 +105,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         }
         DrawCircleAA(500.0f, 370.0f, axis.size * safeArea, 16, GetColor(255, 255, 255), FALSE);
 
-        // 複数軸の描画（脳筋実装版）
+        //##### 複数軸の描画（脳筋実装版）
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 2; j++) {
                 if (getDistance(pos.x, pos.y, axiss[i][0], axiss[i][1]) < axis.size * safeArea + pos.size) {
@@ -129,8 +125,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             }
         }
 
-
-
         //##### ここから 中央物体の処理
 
         //球体移動処理
@@ -144,16 +138,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         if (pos.x < 0 + pos.size || pos.x > WIDTH - pos.size)  moveVec.x = -moveVec.x;
         if (pos.y < 0 + pos.size || pos.y > HEIGHT - pos.size) moveVec.y = -moveVec.y;
 
-        /* 斜め移動
-        if (pos.x <= 0 + pos.size)      move.x = +4;
-        if (pos.x >= WIDTH - pos.size)  move.x = -4;
-        if (pos.y <= 0 + pos.size)      move.y = +4;
-        if (pos.y >= HEIGHT - pos.size) move.y = -4;
-        */
-
-
-
-        // ##### ここから 目標座標の処理
+        //##### ここから 目標座標の処理
         // 目標座標の描画
         DrawBox(goal.x, goal.y, goal.x + pos.size, goal.y + pos.size, GetColor(255, 255, 255), FALSE);
 
@@ -163,20 +148,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			goal.y = getRandom(0 + pos.size, HEIGHT - pos.size);
 		}
 
-
-
-
         //##### ここから 描画処理
+        /* デバッグ用
         printfDx("x:%.2f y:%.2f\n", pos.x, pos.y);
         printfDx("x1:%.2f y1:%.2f\n", axis.x, axis.y);
-        printfDx("pos.size:%.2f axis.size:%.2f\n", pos.size, axis.size);
-        printfDx("SafeArea:%.2f\n", (axis.size * safeArea));
-        printfDx("RealSafeArea:%.2f\n", (axis.size * safeArea + pos.size));
         printfDx("moveVector x:%.2f y:%.2f\n", moveVec.x, moveVec.y);
-        //printfDx("dx:%.2f dy:%.2f\n", dx, dy);
         printfDx("dis:%f\n", getDistance(pos.x, pos.y, axis.x, axis.y));
+        */
         
-
         // 画面の更新（必須）
         ScreenFlip(); // 画面を反転させる処理
         clsDx();      // デバッグログ画面をクリアする処理
