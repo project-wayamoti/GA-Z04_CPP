@@ -41,7 +41,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     //## 環境に応じて設定
 
     // 移動速度
-    int moveSpeed = 8;
+    int moveSpeed = 4; // 60Hz=8, 300Hz=1
 
 
 
