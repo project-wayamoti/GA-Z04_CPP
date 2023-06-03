@@ -103,9 +103,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         //##### ここから 描画処理
         printfDx("x:%f y:%f\n", x, y);
         printfDx("x:%f y:%f\n", x1, y1);
-            printfDx("x:%f y:%f\n", dx, dy);
+        printfDx("x:%f y:%f\n", dx, dy);
         printfDx("%d\n", distance);
-        
+
 
         // 画面の更新（必須）
         ScreenFlip();
