@@ -89,7 +89,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
         //##### 回転可能範囲 (円)
         // 計算式: (軸のサイズ * 10) + (移動物体のサイズ)
-        // TRUE 塗りつぶし / FLASE 塗りつぶさない
+        // TRUE 塗りつぶし / FALSE 塗りつぶさない
         if (getDistance(pos.x, pos.y, axis.x, axis.y) < axis.size * safeArea + pos.size) {
             DrawCircleAA(500.0f, 370.0f, axis.size, 16, GetColor(255, 255, 255), TRUE);
             DrawLine(pos.x, pos.y, axis.x, axis.y, GetColor(255, 255, 255));
@@ -127,8 +127,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
         //##### ここから 中央物体の処理
 
-        //球体移動処理
-        DrawCircle(pos.x, pos.y, pos.size, mainColor, TRUE); //TRUE 塗りつぶし / FLASE 塗りつぶさない
+        //球体移動処理 TRUE 塗りつぶし / FALSE 塗りつぶさない
+        DrawCircle(pos.x, pos.y, pos.size, mainColor, TRUE);
 
         //移動計算
         pos.x = pos.x + moveVec.x * move.x;
